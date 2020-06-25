@@ -1125,27 +1125,27 @@ $B.enter_frame = function(frame){
                  frame[4] === $B.tracefunc.$infos.__func__)){
             // to avoid recursion, don't run the trace function inside itself
             $B.tracefunc.$frame_id = frame[0]
-            return _b_.None
+            return null
         }else{
             // also to avoid recursion, don't run the trace function in the
             // frame "below" it (ie in functions that the trace function
             // calls)
             for(var i = $B.frames_stack.length - 1; i >= 0; i--){
                 if($B.frames_stack[i][0] == $B.tracefunc.$frame_id){
-                    return _b_.None
+                    return null
                 }
             }
             return $B.tracefunc($B._frame.$factory($B.frames_stack,
                 $B.frames_stack.length - 1), 'call', _b_.None)
         }
     }
-    return _b_.None
+    return null
 }
 
 $B.trace_exception = function(){
     var top_frame = $B.last($B.frames_stack)
     if(top_frame[0] == $B.tracefunc.$current_frame_id){
-        return _b_.None
+        return null
     }
     var trace_func = top_frame[1].$f_trace,
         exc = top_frame[1].$current_exception,
@@ -1157,6 +1157,7 @@ $B.trace_exception = function(){
 
 $B.trace_line = function(){
     var top_frame = $B.last($B.frames_stack)
+    console.log("call trace line", top_frame)
     if(top_frame[0] == $B.tracefunc.$current_frame_id){
         return _b_.None
     }
@@ -1170,11 +1171,11 @@ $B.set_line = function(line_info){
     // Used in loops to run trace function
     var top_frame = $B.last($B.frames_stack)
     if($B.tracefunc && top_frame[0] == $B.tracefunc.$current_frame_id){
-        return _b_.None
+        return null
     }
     top_frame[1].$line_info = line_info
     var trace_func = top_frame[1].$f_trace
-    if(trace_func !== _b_.None){
+    if(trace_func){
         var frame_obj = $B._frame.$factory($B.frames_stack,
             $B.frames_stack.length - 1)
         top_frame[1].$ftrace = trace_func(frame_obj, 'line', _b_.None)
@@ -1221,7 +1222,6 @@ $B.set_cm_in_generator = function(cm_exit){
 $B.leave_frame = function(arg){
     // Leave execution frame
     if($B.frames_stack.length == 0){console.log("empty stack"); return}
-    $B.del_exc()
     // When leaving a module, arg is set as an object of the form
     // {value: _b_.None}
     if(arg && arg.value !== undefined && $B.tracefunc){
@@ -1233,6 +1233,7 @@ $B.leave_frame = function(arg){
         }
     }
     var frame = $B.frames_stack.pop()
+    frame[1].$current_exception = undefined
     if(frame[1].$has_yield_in_cm){
         // The attribute $has_yield_in_cm is set in py2js.js /
         // $YieldCtx.transform only if the frame has "yield" inside a
@@ -1248,7 +1249,9 @@ $B.leave_frame_exec = function(arg){
     if($B.profile > 0){$B.$profile.return()}
     if($B.frames_stack.length == 0){console.log("empty stack"); return}
     var frame = $B.frames_stack.pop()
-    exit_ctx_managers_in_generators(frame)
+    if(frame[1].$has_yield_in_cm){
+        exit_ctx_managers_in_generators(frame)
+    }
     for(var i = $B.frames_stack.length - 1; i >= 0; i--){
         if($B.frames_stack[i][2] == frame[2]){
             $B.frames_stack[i][3] = frame[3]

@@ -2390,12 +2390,12 @@ var $ClassCtx = $B.parser.$ClassCtx = function(context){
                  'var $top_frame = [$local_name, $locals,' + '"' +
                  global_scope.id + '", ' + global_ns + ']' +
                  indent + '$locals.$f_trace = $B.enter_frame($top_frame);' +
-                 indent + 'if($locals.$f_trace !== _b_.None){' +
+                 indent + 'if($locals.$f_trace){console.log("2393");' +
                  '$locals.$f_trace = $B.trace_line()}'
         node.insert(1, $NodeJS(js))
 
         // exit frame
-        node.add($NodeJS('if($locals.$f_trace !== _b_.None){' +
+        node.add($NodeJS('if($locals.$f_trace){' +
             '$B.trace_return(_b_.None)}'))
         node.add($NodeJS('$B.leave_frame()'))
         // return local namespace at the end of class definition
@@ -2623,7 +2623,7 @@ var $ConditionCtx = $B.parser.$ConditionCtx = function(context,token){
             var module = $get_module(this).module
             if($B.last(node.children).context.tree[0].type != "return"){
                 var js = '$locals.$line_info = "' + node.line_num +
-                    ',' + module + '";if($locals.$f_trace !== _b_.None){' +
+                    ',' + module + '";if($locals.$f_trace){console.log("2626");' +
                     '$B.trace_line()};_b_.None;'
                 node.add($NodeJS(js))
             }
@@ -3265,7 +3265,6 @@ var $DefCtx = $B.parser.$DefCtx = function(context){
 
         nodes = nodes.concat(enter_frame_nodes)
 
-        nodes.push($NodeJS('$locals.__annotations__ = _b_.dict.$factory()'))
         nodes.push($NodeJS('$locals.$name = "' + this.name + '"'))
 
         // Handle name __class__ in methods (PEP 3135 and issue #1068)
@@ -3307,7 +3306,7 @@ var $DefCtx = $B.parser.$DefCtx = function(context){
         var last_instr = node.children[node.children.length - 1].context.tree[0]
         if(last_instr.type != 'return'){
             // as always, leave frame before returning
-            js = 'if($locals.$f_trace !== _b_.None){\n' +
+            js = 'if($locals.$f_trace){\n' +
                 ' '.repeat(indent + 4) + '$B.trace_return(_b_.None)\n' +
                 ' '.repeat(indent) + '}\n' + ' '.repeat(indent)
             js += '$B.leave_frame'
@@ -3486,7 +3485,7 @@ var $DefCtx = $B.parser.$DefCtx = function(context){
 
         var except_node = $NodeJS('catch(err)')
         except_node.add($NodeJS('$B.set_exc(err)'))
-        except_node.add($NodeJS('if($locals.$f_trace !== _b_.None){' +
+        except_node.add($NodeJS('if($locals.$f_trace){' +
             '$locals.$f_trace = $B.trace_exception()}'))
         except_node.add($NodeJS('$B.leave_frame();throw err'))
 
@@ -4717,7 +4716,7 @@ var $ForExpr = $B.parser.$ForExpr = function(context){
             // Add a line to reset the line number
             if($B.last(node.children).context.tree[0].type != "return"){
                 var js = '$locals.$line_info = "' + node.line_num +
-                    ',' + this.module + '";if($locals.$f_trace !== _b_.None){' +
+                    ',' + this.module + '";if($locals.$f_trace){console.log("4719");' +
                     '$B.trace_line()};_b_.None;'
                 for_node.add($NodeJS(js))
             }
@@ -4888,7 +4887,7 @@ var $ForExpr = $B.parser.$ForExpr = function(context){
         }
         if($B.last(node.children).context.tree[0].type != "return"){
             var js = '$locals.$line_info = "' + node.line_num +
-                ',' + this.module + '";if($locals.$f_trace !== _b_.None){' +
+                ',' + this.module + '";if($locals.$f_trace){console.log("4890");' +
                 '$B.trace_line()};_b_.None;'
             while_node.add($NodeJS(js))
         }
@@ -7801,7 +7800,7 @@ var $ReturnCtx = $B.parser.$ReturnCtx = function(context){
         // will be restored when entering "finally"
         var indent = ' '.repeat(this.node.indent + 1)
         var js = 'var $res = ' + $to_js(this.tree) + ';\n' + indent +
-        'if($locals.$f_trace !== _b_.None){$B.trace_return($res)}\n' + indent +
+        'if($locals.$f_trace){$B.trace_return($res)}\n' + indent +
         '$B.leave_frame'
         if(scope.id.substr(0, 6) == '$exec_'){js += '_exec'}
         js += '("' + scope.id +'");\n' + indent + 'return $res'
@@ -8428,7 +8427,7 @@ var $TryCtx = $B.parser.$TryCtx = function(context){
         // Store exception as the attribute $current_exception of $locals
         catch_node.add($NodeJS("$B.set_exc(" + error_name + ")"))
         // Trace exception if needed
-        catch_node.add($NodeJS("if($locals.$f_trace !== _b_.None)" +
+        catch_node.add($NodeJS("if($locals.$f_trace)" +
             "{$locals.$f_trace = $B.trace_exception()}"))
 
         // Set the boolean $failed to true
@@ -9136,7 +9135,7 @@ var $add_line_num = $B.parser.$add_line_num = function(node, rank, line_info){
             _line_info = line_info === undefined ? line_num + ',' + mod_id :
                 line_info
             var js = ';$locals.$line_info = "' + _line_info +
-                '";if($locals.$f_trace !== _b_.None){$B.trace_line()};' +
+                '";if($locals.$f_trace){console.log("9138");$B.trace_line()};' +
                 '_b_.None;'
 
             var new_node = new $Node()

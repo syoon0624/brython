@@ -102,8 +102,8 @@ new Function("$locals_script",js)({})}})(__BRYTHON__)
 __BRYTHON__.implementation=[3,8,9,'dev',0]
 __BRYTHON__.__MAGIC__="3.8.9"
 __BRYTHON__.version_info=[3,8,0,'final',0]
-__BRYTHON__.compiled_date="2020-06-22 15:16:17.203859"
-__BRYTHON__.timestamp=1592831777203
+__BRYTHON__.compiled_date="2020-06-25 09:08:11.381868"
+__BRYTHON__.timestamp=1593068891381
 __BRYTHON__.builtin_module_names=["_aio","_ajax","_base64","_binascii","_io_classes","_jsre","_locale","_multiprocessing","_posixsubprocess","_profile","_sre_utils","_string","_strptime","_svg","_warnings","_webcomponent","_webworker","_zlib_utils","array","builtins","dis","hashlib","long_int","marshal","math","math1","math_kozh","modulefinder","posix","random","unicodedata"]
 ;
 
@@ -1259,10 +1259,10 @@ this.module+'";'+indent+
 'var $top_frame = [$local_name, $locals,'+'"'+
 global_scope.id+'", '+global_ns+']'+
 indent+'$locals.$f_trace = $B.enter_frame($top_frame);'+
-indent+'if($locals.$f_trace !== _b_.None){'+
+indent+'if($locals.$f_trace){console.log("2393");'+
 '$locals.$f_trace = $B.trace_line()}'
 node.insert(1,$NodeJS(js))
-node.add($NodeJS('if($locals.$f_trace !== _b_.None){'+
+node.add($NodeJS('if($locals.$f_trace){'+
 '$B.trace_return(_b_.None)}'))
 node.add($NodeJS('$B.leave_frame()'))
 var ret_obj=new $Node()
@@ -1384,7 +1384,7 @@ this.transform=function(node,rank){var scope=$get_scope(this)
 if(this.token=="while"){node.parent.insert(rank,$NodeJS('$locals["$no_break'+this.loop_num+'"] = true'))
 var module=$get_module(this).module
 if($B.last(node.children).C.tree[0].type !="return"){var js='$locals.$line_info = "'+node.line_num+
-','+module+'";if($locals.$f_trace !== _b_.None){'+
+','+module+'";if($locals.$f_trace){console.log("2626");'+
 '$B.trace_line()};_b_.None;'
 node.add($NodeJS(js))}
 return 2}}
@@ -1661,7 +1661,6 @@ subelse_node.add($NodeJS("for(var i = $len; i < defparams.length"+
 "; i++){$locals[defparams[i]] = $defaults[defparams[i]]}"))}}else{nodes.push(make_args_nodes[0])
 if(make_args_nodes.length > 1){nodes.push(make_args_nodes[1])}}
 nodes=nodes.concat(enter_frame_nodes)
-nodes.push($NodeJS('$locals.__annotations__ = _b_.dict.$factory()'))
 nodes.push($NodeJS('$locals.$name = "'+this.name+'"'))
 var is_method=scope.ntype=="class"
 if(is_method){var class_name=scope.C.tree[0].name,class_block=scope.parent_block,class_ref="$locals_"+class_block.id.replace(/\./g,'_')+
@@ -1678,7 +1677,7 @@ def_func_node.is_def_func=true
 def_func_node.module=this.module
 var last_instr=node.children[node.children.length-1].C.tree[0]
 if(last_instr.type !='return'){
-js='if($locals.$f_trace !== _b_.None){\n'+
+js='if($locals.$f_trace){\n'+
 ' '.repeat(indent+4)+'$B.trace_return(_b_.None)\n'+
 ' '.repeat(indent)+'}\n'+' '.repeat(indent)
 js+='$B.leave_frame'
@@ -1762,7 +1761,7 @@ children.forEach(function(child){if(child.is_def_func){child.children.forEach(fu
 parent.children.splice(pos+2,parent.children.length)
 var except_node=$NodeJS('catch(err)')
 except_node.add($NodeJS('$B.set_exc(err)'))
-except_node.add($NodeJS('if($locals.$f_trace !== _b_.None){'+
+except_node.add($NodeJS('if($locals.$f_trace){'+
 '$locals.$f_trace = $B.trace_exception()}'))
 except_node.add($NodeJS('$B.leave_frame();throw err'))
 parent.add(except_node)
@@ -2424,7 +2423,7 @@ for_node.add($NodeJS('else{$next'+num+' = $B.add($next'+
 num+',1)}'))}
 children.forEach(function(child){for_node.add(child.clone_tree())})
 if($B.last(node.children).C.tree[0].type !="return"){var js='$locals.$line_info = "'+node.line_num+
-','+this.module+'";if($locals.$f_trace !== _b_.None){'+
+','+this.module+'";if($locals.$f_trace){console.log("4719");'+
 '$B.trace_line()};_b_.None;'
 for_node.add($NodeJS(js))}
 var in_loop=false
@@ -2499,7 +2498,7 @@ children.forEach(function(child){
 while_node.add(child.clone())})
 if(node.children.length==0){console.log("bizarre",this)}
 if($B.last(node.children).C.tree[0].type !="return"){var js='$locals.$line_info = "'+node.line_num+
-','+this.module+'";if($locals.$f_trace !== _b_.None){'+
+','+this.module+'";if($locals.$f_trace){console.log("4890");'+
 '$B.trace_line()};_b_.None;'
 while_node.add($NodeJS(js))}
 node.children=[]
@@ -3890,7 +3889,7 @@ if(scope.ntype=='generator'){return 'var $res = '+$to_js(this.tree)+'; $B.leave_
 'return $B.generator_return($res)'}
 var indent=' '.repeat(this.node.indent+1)
 var js='var $res = '+$to_js(this.tree)+';\n'+indent+
-'if($locals.$f_trace !== _b_.None){$B.trace_return($res)}\n'+indent+
+'if($locals.$f_trace){$B.trace_return($res)}\n'+indent+
 '$B.leave_frame'
 if(scope.id.substr(0,6)=='$exec_'){js+='_exec'}
 js+='("'+scope.id+'");\n'+indent+'return $res'
@@ -4201,7 +4200,7 @@ node.has_return=this.has_return
 var catch_node=$NodeJS('catch('+error_name+')')
 node.parent.insert(rank+1,catch_node)
 catch_node.add($NodeJS("$B.set_exc("+error_name+")"))
-catch_node.add($NodeJS("if($locals.$f_trace !== _b_.None)"+
+catch_node.add($NodeJS("if($locals.$f_trace)"+
 "{$locals.$f_trace = $B.trace_exception()}"))
 catch_node.add(
 $NodeJS(failed_name+' = true;'+
@@ -4518,7 +4517,7 @@ else if(elt.type=='single_kw'){flag=false}
 if(flag){_line_info=line_info===undefined ? line_num+','+mod_id :
 line_info
 var js=';$locals.$line_info = "'+_line_info+
-'";if($locals.$f_trace !== _b_.None){$B.trace_line()};'+
+'";if($locals.$f_trace){console.log("9138");$B.trace_line()};'+
 '_b_.None;'
 var new_node=new $Node()
 new_node.is_line_num=true 
@@ -6286,24 +6285,25 @@ if($B.tracefunc && $B.tracefunc !==_b_.None){if(frame[4]===$B.tracefunc ||
 ($B.tracefunc.$infos && frame[4]&&
 frame[4]===$B.tracefunc.$infos.__func__)){
 $B.tracefunc.$frame_id=frame[0]
-return _b_.None}else{
-for(var i=$B.frames_stack.length-1;i >=0;i--){if($B.frames_stack[i][0]==$B.tracefunc.$frame_id){return _b_.None}}
+return null}else{
+for(var i=$B.frames_stack.length-1;i >=0;i--){if($B.frames_stack[i][0]==$B.tracefunc.$frame_id){return null}}
 return $B.tracefunc($B._frame.$factory($B.frames_stack,$B.frames_stack.length-1),'call',_b_.None)}}
-return _b_.None}
+return null}
 $B.trace_exception=function(){var top_frame=$B.last($B.frames_stack)
-if(top_frame[0]==$B.tracefunc.$current_frame_id){return _b_.None}
+if(top_frame[0]==$B.tracefunc.$current_frame_id){return null}
 var trace_func=top_frame[1].$f_trace,exc=top_frame[1].$current_exception,frame_obj=$B._frame.$factory($B.frames_stack,$B.frames_stack.length-1)
 return trace_func(frame_obj,'exception',$B.fast_tuple([exc.__class__,exc,$B.traceback.$factory(exc)]))}
 $B.trace_line=function(){var top_frame=$B.last($B.frames_stack)
+console.log("call trace line",top_frame)
 if(top_frame[0]==$B.tracefunc.$current_frame_id){return _b_.None}
 var trace_func=top_frame[1].$f_trace,frame_obj=$B._frame.$factory($B.frames_stack,$B.frames_stack.length-1)
 return trace_func(frame_obj,'line',_b_.None)}
 $B.set_line=function(line_info){
 var top_frame=$B.last($B.frames_stack)
-if($B.tracefunc && top_frame[0]==$B.tracefunc.$current_frame_id){return _b_.None}
+if($B.tracefunc && top_frame[0]==$B.tracefunc.$current_frame_id){return null}
 top_frame[1].$line_info=line_info
 var trace_func=top_frame[1].$f_trace
-if(trace_func !==_b_.None){var frame_obj=$B._frame.$factory($B.frames_stack,$B.frames_stack.length-1)
+if(trace_func){var frame_obj=$B._frame.$factory($B.frames_stack,$B.frames_stack.length-1)
 top_frame[1].$ftrace=trace_func(frame_obj,'line',_b_.None)}
 return true}
 $B.trace_return=function(value){var top_frame=$B.last($B.frames_stack),trace_func=top_frame[1].$f_trace,frame_obj=$B._frame.$factory($B.frames_stack,$B.frames_stack.length-1)
@@ -6318,10 +6318,10 @@ $B.set_cm_in_generator=function(cm_exit){if(cm_exit !==undefined){$B.frames_stac
 frame[1].$cm_in_gen.add(cm_exit)})}}
 $B.leave_frame=function(arg){
 if($B.frames_stack.length==0){console.log("empty stack");return}
-$B.del_exc()
 if(arg && arg.value !==undefined && $B.tracefunc){if($B.last($B.frames_stack)[1].$f_trace===undefined){$B.last($B.frames_stack)[1].$f_trace=$B.tracefunc}
 if($B.last($B.frames_stack)[1].$f_trace !==_b_.None){$B.trace_return(arg.value)}}
 var frame=$B.frames_stack.pop()
+frame[1].$current_exception=undefined
 if(frame[1].$has_yield_in_cm){
 exit_ctx_managers_in_generators(frame)}
 return _b_.None}
@@ -6329,7 +6329,7 @@ $B.leave_frame_exec=function(arg){
 if($B.profile > 0){$B.$profile.return()}
 if($B.frames_stack.length==0){console.log("empty stack");return}
 var frame=$B.frames_stack.pop()
-exit_ctx_managers_in_generators(frame)
+if(frame[1].$has_yield_in_cm){exit_ctx_managers_in_generators(frame)}
 for(var i=$B.frames_stack.length-1;i >=0;i--){if($B.frames_stack[i][2]==frame[2]){$B.frames_stack[i][3]=frame[3]}}}
 var min_int=Math.pow(-2,53),max_int=Math.pow(2,53)-1
 $B.is_safe_int=function(){for(var i=0;i < arguments.length;i++){var arg=arguments[i]
@@ -9100,15 +9100,12 @@ return _b_.NotImplemented}
 JSObject.__len__=function(self){if(typeof self.js.length=='number'){return self.js.length}
 try{return $B.$getattr(self.js,'__len__')()}
 catch(err){throw _b_.AttributeError.$factory(self.js+' has no attribute __len__')}}
-JSObject.__repr__=function(self){if(self.js instanceof Date){return self.js.toString()}else if(typeof self.js=="bigint"){return self.js}
+JSObject.__repr__=function(self){if(self.js instanceof Date){return self.js.toString()}
 var proto=Object.getPrototypeOf(self.js)
 if(proto){var name=proto.constructor.name
 if(name===undefined){
 var proto_str=proto.constructor.toString()
 name=proto_str.substring(8,proto_str.length-1)}
-console.log("JSObject str",self.js,$B.imported.javascript.BigInt)
-if($B.imported.javascript.BigInt &&
-self.js instanceof $B.imported.javascript.BigInt.js){console.log("str of BigInt")}
 return "<"+name+" object>"}
 return "<JSObject wraps "+self.js+">"}
 JSObject.__setattr__=function(self,attr,value){if(attr.substr && attr.substr(0,2)=='$$'){
@@ -9469,11 +9466,9 @@ _mod_name+"' is not a package"
 exc.args=$B.fast_tuple([exc.msg])
 exc.name=mod_name
 exc.path=_b_.None
-throw exc}}}}}else{if(mod_name=="_frozen_importlib_external"){console.log(mod_name,"in imported",$B.imported[mod_name])}
-if($B.imported[parsed_name[0]]&&
+throw exc}}}}}else{if($B.imported[parsed_name[0]]&&
 parsed_name.length==2){try{$B.$setattr($B.imported[parsed_name[0]],parsed_name[1],modobj)}catch(err){console.log("error",parsed_name,modobj)
 throw err}}}
-if(mod_name=="_frozen_importlib_external"){alert("for "+mod_name+" __file__ "+$B.imported[mod_name].__file__)}
 if(fromlist.length > 0){
 return $B.imported[mod_name]}else{
 return $B.imported[parsed_name[0]]}}
@@ -11353,13 +11348,6 @@ throw _b_.TypeError.$factory("list indices must be integer, not "+
 $B.class_name(arg))}
 $B.make_rmethods(list)
 var _ops=["add","sub"]
-var simple_args=function(name,expected,args){var len=args.length,last=args[len-1]
-if(last && last.$nat){throw _b_.TypeError.$factory(name+"() takes no keyword arguments")}
-if(len !=expected){if(expected==0){throw _b_.TypeError.$factory(name+"() takes no argument"+
-" ("+len+" given)")}else{
-throw _b_.TypeError.$factory(name+"() takes exactly "+
-expected+" argument"+(expected < 2 ? '' :'s')+
-" ("+len+" given)")}}}
 list.append=function(self,x){$B.check_no_kw("append",self,x)
 $B.check_nb_args("append",2,arguments)
 self.push(x)
