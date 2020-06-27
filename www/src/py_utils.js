@@ -875,6 +875,10 @@ $B.$call = function(callable){
         return callable
     }
     else if(callable.$is_func || typeof callable == "function"){
+        if(callable.$is_genfunc){
+            // set attribute $has_generator, for cleanup when frame exits
+            $B.last($B.frames_stack)[1].$has_generator = true
+        }
         return callable
     }else if(callable.$factory){
         return callable.$factory
@@ -1234,7 +1238,7 @@ $B.leave_frame = function(arg){
     }
     var frame = $B.frames_stack.pop()
     frame[1].$current_exception = undefined
-    if(frame[1].$has_yield_in_cm){
+    if(frame[1].$has_generator){
         // The attribute $has_yield_in_cm is set in py2js.js /
         // $YieldCtx.transform only if the frame has "yield" inside a
         // context manager.
